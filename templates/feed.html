@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Library</title>
+    <link rel="icon"
+          href="https://i.scdn.co/image/ab6761610000e5ebe689fe5b3724107b34cbb743">
+
+    <style>
+        body {
+            background-image: url('https://tntmusic.ru/media/content/article/2020-07-31_15-52-53__e52495ce-d345-11ea-b2d3-e7bb315c2d29.jpg');
+            background-size: cover;
+        }
+
+        div.container {
+            background: white;
+            padding-bottom: 2%;
+            padding-top: 2%;
+        }
+
+        #main {
+            margin-top: 1%;
+            background-color: rgba(255, 255, 255, 0.95);
+            font-family: Avenir, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+{% if user.is_authenticated %}
+    {% include 'header.html' %}
+{% else %}
+    {% include 'header_unauthorized.html' %}
+{% endif %}
+{% for beat in beats %}
+    <div class="container col-9" style="text-align: center; border-radius: 15px" id="main">
+        <h1 class="container">{{ beat }}</h1>
+        <h4>{{ beat.genre.name }} - {{ beat.key }} - {{ beat.bpm }}bpm</h4>
+        <p>{{ beat.description }}</p>
+        <audio preload="metadata" controls src="/media/{{ beat.file.name }}" type="audio/mpeg">Проиграть бит</audio>
+        <br>
+        <a href="/download/?id={{ beat.pk }}" class="col-3" style="text-align: right; color: gray;">Скачать</a>
+        {% if user in beat.authors.all() or user.is_superuser %}
+            <a href="/edit/?id={{ beat.pk }}" class="col-3" style="text-align: left; color: gray;">Редактировать</a>
+            <a href="/delete/?id={{ beat.pk }}" class="col-3" style="text-align: center; color: indianred;">Удалить</a>
+        {% endif %}
+    </div>
+    <br>
+{% endfor %}
+</body>
+<script>
+</script>
+</html>

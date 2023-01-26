@@ -1,0 +1,27 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<nav class="navbar navbar-expand navbar-light bg-light shadow-sm">
+    <div class="container-fluid">
+        <ul class="navbar-nav" style="display: flex; flex-direction: row; justify-content: left; width: 100%;">
+            <li>
+                <a onclick="window.history.back()" class="nav-link">
+                    ← Назад
+                </a>
+            </li>
+            <li>
+                <a class="nav-link" href="/mine/">Перейти к своим битам</a>
+            </li>
+            <li>
+                <a class="nav-link" href="/feed/">Перейти в библиотеку всех битов</a>
+            </li>
+            <li>
+                <a class="nav-link" href="/creation/">Загрузить бит</a>
+            </li>
+            <li>
+                <a class="nav-link" href="/logout/">Выйти</a>
+            </li>
+        </ul>
+        <a href="/mine/" class="nav-link"
+               style="justify-content: right; color: {% if user.is_superuser %} crimson {% else %} #74adc4 {% endif %}"><strong>{{ user.username }}</strong></a>
+    </div>
+</nav>

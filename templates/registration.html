@@ -1,0 +1,54 @@
+<html lang="ru">
+<head>
+    <title>Registration</title>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <link rel="icon"
+          href="https://i.scdn.co/image/ab6761610000e5ebe689fe5b3724107b34cbb743">
+    <style>
+        body {
+            background-image: url('https://tntmusic.ru/media/content/article/2020-07-31_15-52-53__e52495ce-d345-11ea-b2d3-e7bb315c2d29.jpg');
+            background-size: cover;
+        }
+
+        div.container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding-bottom: 3%;
+            margin-top: 1%;
+        }
+    </style>
+</head>
+<body>
+<div class="container col-6 rounded" style="text-align: center">
+    <br/>
+    <h1>Регистрация</h1>
+    <br/>
+    <form class="form-group" method="POST" action="/registration_action/">
+        <label for="username">
+            Введите свой никнейм:<br/>
+            <input class="form-control" type="text" id="username" name="username" maxlength="25"/>
+        </label>
+        <br>
+        <br>
+        <label for="password">
+            Введите пароль:
+            <input class="form-control" type="password" id="password" name="password" maxlength="40">
+        </label>
+        <br/>
+        <br/>
+        <label for="approval">
+            Введите пароль еще раз:
+            <input class="form-control" type="password" id="approval" name="approval" maxlength="40">
+        </label>
+        <br/>
+        <br/>
+        <label>
+            <button class="btn btn-outline-secondary" type="submit">Создать аккаунт</button>
+        </label>
+    </form>
+    <p>Есть аккаунт? <a href="/login/">Войдите</a></p>
+</div>
+</body>
+</html>

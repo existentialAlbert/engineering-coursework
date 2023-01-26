@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Postladneem Beats</title>
+    <link rel="icon"
+          href="https://i.scdn.co/image/ab6761610000e5ebe689fe5b3724107b34cbb743">
+    <style>
+        body {
+            background-image: url('https://tntmusic.ru/media/content/article/2020-07-31_15-52-53__e52495ce-d345-11ea-b2d3-e7bb315c2d29.jpg');
+            background-size: cover;
+        }
+
+        div.container {
+            padding-top: 1%;
+        }
+    </style>
+</head>
+<body>
+{% if user.is_authenticated %}
+    {% include 'header.html' %}
+{% else %}
+    {% include 'header_unauthorized.html' %}
+{% endif %}
+<div class="container">
+    <div class="row justify-content-center">
+
+        <div class="col-8">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="h1" style="text-align: center">Создание бита</h1>
+                    <br>
+                    <br>
+                    <form class="form-group" method="POST" action="/beats/" enctype="multipart/form-data">
+                        <label for="file">
+                            <strong>Загрузите ваш бит:</strong>
+                            <br>
+                            <input required class="form-control" type="file" name="file" id="file" accept="audio/*">
+                        </label>
+                        <br>
+                        <br>
+                        <label for="name">
+                            <strong>Назовите ваш бит:</strong>
+                            <br>
+                            <input class="form-control" name="name" id="name" type="text" required>
+                        </label>
+                        <br>
+                        <br>
+                        <label for="description">
+                            <strong>Введите описание:</strong>
+                            <br>
+                            <textarea id="description" name="description" placeholder="Введите описание" rows="3"
+                                      class="form-control" cols="45" maxlength="500" required></textarea>
+                        </label>
+                        <br>
+                        <br>
+                        <label for="genre">
+                            <strong>Укажите жанр:</strong>
+                            <select required class="form-select" id="genre" name="genre">
+                                {% for genre in genres %}
+                                    <option value="{{ genre }}">{{ genre }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <br>
+                        <br>
+                        <label for="bpm">
+                            <strong>Укажите BPM:</strong>
+                            <br>
+                            <input required class="form-control" name="bpm" id="bpm" type="number" value="90" max="241"
+                                   min="9">
+                        </label>
+                        <br>
+                        <br>
+                        <label for="key"><strong>Укажите тональность:</strong>
+                            <select required class="form-select" id="key" name="key">
+                                {% for key in keys %}
+                                    <option value="{{ key }}">{{ key }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <br>
+                        <br>
+                        <button type="submit" class="btn btn-outline-secondary">Загрузить</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
