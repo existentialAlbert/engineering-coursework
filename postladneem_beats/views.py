@@ -1,14 +1,17 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.http import FileResponse, HttpResponse
+from django.http import FileResponse, HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template import loader
+from django.utils.datastructures import MultiValueDictKeyError
 
 from postladneem_beats.models import Beat, Genre, Key
 
 
-def download(request):
+def download_action(request):
+    if not request.user:
+        redirect("/login/")
     beat_to_download = get_object_or_404(Beat, pk=request.GET["id"])
     response = FileResponse(
         beat_to_download.file.file, filename=beat_to_download.file.name, content_type="audio/mpeg", as_attachment=True
@@ -17,6 +20,8 @@ def download(request):
 
 
 def remove_action(request):
+    if not request.user:
+        redirect("/login/")
     if not Beat.objects.filter(pk=request.GET["id"]).exists():
         return redirect("/feed/")
     beat_to_delete = Beat.objects.get(pk=request.GET["id"])
@@ -26,6 +31,12 @@ def remove_action(request):
 
 
 def edit_action(request):
+    if not request.user:
+        redirect("/login/")
+
+    if not request.GET.get("id"):
+        return HttpResponseBadRequest("No ID provided")
+
     if request.method == "POST":
         beat_to_edit = get_object_or_404(Beat, pk=request.GET["id"])
         if request.POST["name"] != beat_to_edit.name and Beat.objects.filter(name=request.POST["name"]).exists():
@@ -45,6 +56,10 @@ def registration_page(request):
 
 
 def edit_page(request):
+    if not request.user:
+        redirect("/login/")
+    if not request.GET.get("id"):
+        return HttpResponseBadRequest("No ID provided")
     if request.method == "GET":
         beat_to_edit = get_object_or_404(Beat, pk=request.GET["id"])
         return render(
@@ -59,6 +74,8 @@ def edit_page(request):
 
 
 def registration_action(request):
+    if not request.user:
+        redirect("/login/")
     username = request.POST["username"]
     approval = request.POST["approval"]
     password = request.POST["password"]
@@ -71,7 +88,7 @@ def registration_action(request):
             login(request=request, user=User.objects.create_user(username=username, password=password))
             return redirect("/feed/")
         else:
-            return redirect("/registration/")
+            return HttpResponseBadRequest()
 
 
 def logout_action(request):
@@ -87,7 +104,13 @@ def login_action(request):
         login(request=request, user=user)
         return redirect("/feed/")
     else:
-        return redirect("/login/")
+        return HttpResponseForbidden("Invalid credentials")
+
+
+def root_page(request):
+    if not request.user:
+        return redirect("/login/", permanent=True)
+    return redirect("/feed/", permanent=True)
 
 
 def login_page(request):
@@ -95,6 +118,8 @@ def login_page(request):
 
 
 def feed_page(request):
+    if not request.user:
+        redirect("/login/")
     context = {
         "beats": Beat.objects.order_by("name"),
     }
@@ -114,22 +139,27 @@ def creation_page(request):
     return HttpResponse(template.render(context, request))
 
 
-def create_beat(request):
+def create_beat_action(request):
     if request.method == "POST":
-        new_beat = Beat(
-            name=request.POST["name"],
-            description=request.POST["description"],
-            genre=Genre.objects.get(name=request.POST["genre"]),
-            bpm=int(request.POST["bpm"]),
-            key=Key.objects.get(tonica=request.POST["key"][0], is_minor="m" in request.POST["key"]),
-        )
-        new_beat.file.save(request.FILES["file"].name, request.FILES["file"])
+        try:
+            new_beat = Beat(
+                name=request.POST["name"],
+                description=request.POST["description"],
+                genre=Genre.objects.get(name=request.POST["genre"]),
+                bpm=int(request.POST["bpm"]),
+                key=Key.objects.get(tonica=request.POST["key"][0], is_minor="m" in request.POST["key"]),
+            )
+            new_beat.file.save(request.FILES["file"].name, request.FILES["file"])
+        except:
+            return HttpResponseBadRequest()
+
         new_beat.authors.set([request.user])
         new_beat.save()
-    return redirect("/feed/")
+        return redirect("/feed/")
+    return HttpResponse(status=405)
 
 
-def mine(request):
+def mine_page(request):
     context = {
         "beats": Beat.objects.filter(authors__pk__exact=request.user.pk).order_by("name"),
     }

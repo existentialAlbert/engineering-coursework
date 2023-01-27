@@ -1,2 +1,6 @@
 django
 jinja2
+pytest
+pytest-mock
+pytest-django
+pytest-factoryboy
